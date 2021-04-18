@@ -4,6 +4,6 @@ python:
 install:
  - pip install coveralls
 script:
- - coverage -m unittest mizuna.tests.test_mizuna
+ - coverage run -m unittest mizuna.tests.test_mizuna
 after_success:
  - coveralls
