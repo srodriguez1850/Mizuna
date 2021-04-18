@@ -1,6 +1,8 @@
 language: python
 python:
  - "3.7"
+install:
+ - pip install coveralls
 script:
  - coverage -m unittest mizuna.tests.test_mizuna
 after_success:
