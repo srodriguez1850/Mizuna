@@ -2,4 +2,4 @@ language: python
 python:
  - "3.7"
 script:
- - python -m unittest tests.test_mizuna
+ - python -m unittest mizuna.tests.test_mizuna
