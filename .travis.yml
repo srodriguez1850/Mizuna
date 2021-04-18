@@ -5,5 +5,6 @@ install:
  - pip install coveralls
 script:
  - coverage run -m unittest mizuna.tests.test_mizuna
+ - python setup.py sdist bdist_wheel
 after_success:
  - coveralls
