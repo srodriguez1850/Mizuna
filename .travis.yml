@@ -3,3 +3,5 @@ python:
  - "3.7"
 script:
  - python -m unittest mizuna.tests.test_mizuna
+after_success:
+ - coveralls

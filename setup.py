@@ -6,9 +6,7 @@ version = '0.1.0'
 description = 'Mizuna is a package that automates uploading visualizations to Overleaf projects.'
 long_description = (here / 'README.md').read_text(encoding='utf-8')
 
-# Setting up
 setup(
-    # the name must match the folder name 'verysimplemodule'
     name='Mizuna',
     version=version,
     author='Sebastian Rodriguez',
@@ -17,7 +15,7 @@ setup(
     description=description,
     long_description=long_description,
     long_description_content_type='text/markdown',
-    license = 'MIT License',
+    license='MIT License',
     packages=find_packages(),
     python_requires='>=3.7, <4',
     # install_requires=[],
@@ -26,9 +24,8 @@ setup(
               'jupyter',
               'matplotlib', 'seaborn', 'ggplot', 'plotly'],
 
-    project_urls={  # Optional
+    project_urls={
         'Bug Reports': 'https://github.com/srodriguez1850/Mizuna/issues',
-        'Funding': 'https://donate.pypi.org',
         'Source': 'https://github.com/srodriguez1850/Mizuna/issues'
     },
 
