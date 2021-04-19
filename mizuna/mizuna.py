@@ -1,8 +1,7 @@
 import os
 import shutil
 from mizuna.gitoverleaf import GitOverleaf
-
-samefile_original_func = shutil._samefile
+import warnings
 
 
 # TODO: we should NOT be overwriting the samefile hook, but it'll work with GDrive for the meantime
@@ -11,20 +10,27 @@ def samefile_network_hook(*args, **kwargs):
     return False
 
 
-shutil._samefile = samefile_network_hook
+samefile_original_func = shutil._samefile
 
 
 class Mizuna:
 
     def __init__(self,
-                 repo_remote_url,
-                 repo_local_directory):
+                 repo_remote_url: str,
+                 repo_local_directory: str,
+                 networked_drive: bool = False):
 
         self._cwd = os.getcwd()
 
         print(f'Thanks for using Mizuna!')
         print(f'Mizuna will setup a sync folder from your current working directory.')
         print(f'Current working directory: {self._cwd}')
+
+        if networked_drive:
+            warnings.warn(f'A bug in Python (see https://bugs.python.org/issue33935) prevents files in networked drives from copying properly.'
+                          f'Mizuna will prevent a crucial routine in the copying method from running.'
+                          f'This will allow the metadata of same files to be updated and overwritten.', RuntimeWarning)
+            shutil._samefile = samefile_network_hook
 
         self._files_tracked = set()
         self.files_tracked_count = len(self._files_tracked)
