@@ -1,10 +1,28 @@
+os: linux
+dist: xenial
 language: python
+
 python:
  - "3.7"
+ - "3.8"
+ - "3.9"
+
 install:
+ - pip install twine
  - pip install coveralls
+
 script:
  - coverage run -m unittest mizuna.tests.test_mizuna
- - python setup.py sdist bdist_wheel
+# - python setup.py sdist bdist_wheel
+
 after_success:
  - coveralls
+
+deploy:
+ provider: pypi
+ username: __token__
+ server: https://test.pypi.org/legacy/
+ distributions: sdist bdist_wheel
+ edge: true
+ on:
+  tags: true

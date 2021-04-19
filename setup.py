@@ -1,14 +1,16 @@
 from setuptools import setup, find_packages
 import pathlib
 
-here = pathlib.Path(__file__).parent.resolve()
-version = '0.1.0'
+# here = pathlib.Path(__file__).parent.resolve()
+v = {}
+version = exec(open('mizuna/version.py').read(), v)
 description = 'Mizuna is a package that automates uploading visualizations to Overleaf projects.'
-long_description = (here / 'README.md').read_text(encoding='utf-8')
+# long_description = (here / 'README.md').read_text(encoding='utf-8')
+long_description = open('README.md').read()
 
 setup(
     name='Mizuna',
-    version=version,
+    version=v['__version__'],
     author='Sebastian Rodriguez',
     author_email='s.rodriguez1850@outlook.com',
     url='https://github.com/srodriguez1850/Mizuna',
@@ -33,7 +35,6 @@ setup(
         'Development Status :: 2 - Pre-Alpha',
         'Intended Audience :: Developers',
         'Intended Audience :: Science/Research',
-        'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 3',
         'Operating System :: MacOS :: MacOS X',
         'Operating System :: Microsoft :: Windows',
