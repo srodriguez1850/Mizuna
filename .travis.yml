@@ -12,7 +12,7 @@ install:
  - pip install coveralls
 
 script:
- - coverage run -m unittest mizuna.tests.test_mizuna --omit=/home/*
+ - coverage run --omit=/home/* -m unittest mizuna.tests.test_mizuna
 
 after_success:
  - coveralls
