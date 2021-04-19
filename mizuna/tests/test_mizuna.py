@@ -1,5 +1,4 @@
 import unittest
-import warnings
 from mizuna import Mizuna
 
 test_repo_url = 'https://git.overleaf.com/6078b25623c7c09fd1d3f4a2'
@@ -10,17 +9,21 @@ file_list = ['file2', 'file3']
 file_single2 = 'file4'
 
 
+# TODO: initialize with dummy connections
 class Initialization(unittest.TestCase):
+
+    def test_version(self):
+        from mizuna.version import __version__
+        m = Mizuna(test_repo_url, test_repo_dir)
+        self.assertEqual(m.version, __version__)
 
     @staticmethod
     def test_initialization():
         m = Mizuna(test_repo_url, test_repo_dir)
 
-    @staticmethod
-    def test_networked_drive_warning():
-        with warnings.catch_warnings(record=True) as w:
-            m = Mizuna(test_repo_url, test_repo_dir, True)
-            assert issubclass(w[0].category, RuntimeWarning)
+    def test_networked_drive_warning(self):
+        m = Mizuna(test_repo_url, test_repo_dir, True)
+        self.assertRaises(RuntimeWarning)
 
 
 class Tracking(unittest.TestCase):

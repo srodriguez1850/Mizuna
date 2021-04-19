@@ -1,6 +1,6 @@
 import os
 from typing import List, Optional, Dict, Any, Tuple
-from mizuna.utils import call_subprocess, get_credentials
+from .utils import call_subprocess, get_credentials
 
 
 def _git(cmd_tokens: List[str],
