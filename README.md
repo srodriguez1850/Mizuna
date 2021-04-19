@@ -9,4 +9,4 @@ Mizuna is a package that automates uploading files (e.g., visualizations) to Ove
 
 - Files from networked drives may throw an incorrect SameFileError exception.
     - See https://bugs.python.org/issue33935
-    - To circumvent, all samefile checks from shutil.copy() will return False
+    - To circumvent, the option to prevent samefile checks from shutil.copy() is given.
