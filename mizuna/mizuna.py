@@ -1,6 +1,17 @@
 import os
-from shutil import copy2
+import shutil
 from mizuna.gitoverleaf import GitOverleaf
+
+samefile_original_func = shutil._samefile
+
+
+# TODO: we should NOT be overwriting the samefile hook, but it'll work with GDrive for the meantime
+# all files will be considered different
+def samefile_network_hook(*args, **kwargs):
+    return False
+
+
+shutil._samefile = samefile_network_hook
 
 
 class Mizuna:
@@ -102,11 +113,14 @@ class Mizuna:
 
         # copy files over sync folder
         for file in self._files_tracked:
+            src = file
             dest = os.path.join(self._bridge.repo_local_directory, file)
-            print(file, dest)
+            print(src, dest)
             if not os.path.exists(os.path.dirname(dest)):
                 os.makedirs(os.path.dirname(dest), exist_ok=True)
-            copy2(file, os.path.join(self._bridge.repo_local_directory, file))
+            shutil.copy2(src, dest)
+
+
 
         self._bridge.add()
         self._bridge.commit()
