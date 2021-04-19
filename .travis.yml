@@ -3,9 +3,11 @@ dist: xenial
 language: python
 
 python:
- - "3.7"
- - "3.8"
- - "3.9"
+ - 3.5
+ - 3.6
+ - 3.7
+ - 3.8
+ - 3.9
 
 install:
  - pip install twine
@@ -13,7 +15,6 @@ install:
 
 script:
  - coverage run -m unittest mizuna.tests.test_mizuna
-# - python setup.py sdist bdist_wheel
 
 after_success:
  - coveralls
@@ -23,6 +24,7 @@ deploy:
  username: __token__
  server: https://test.pypi.org/legacy/
  distributions: sdist bdist_wheel
+ skip_existing: true
  edge: true
  on:
   tags: true

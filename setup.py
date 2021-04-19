@@ -1,11 +1,9 @@
 from setuptools import setup, find_packages
 import pathlib
 
-# here = pathlib.Path(__file__).parent.resolve()
 v = {}
 version = exec(open('mizuna/version.py').read(), v)
 description = 'Mizuna is a package that automates uploading visualizations to Overleaf projects.'
-# long_description = (here / 'README.md').read_text(encoding='utf-8')
 long_description = open('README.md').read()
 
 setup(
@@ -19,7 +17,7 @@ setup(
     long_description_content_type='text/markdown',
     license='MIT License',
     packages=find_packages(),
-    python_requires='>=3.7, <4',
+    python_requires='>=3.5, <4',
     # install_requires=[],
     keywords=['python', 'workflow', 'data-science',
               'latex', 'overleaf',
