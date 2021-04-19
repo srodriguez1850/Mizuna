@@ -1,6 +1,7 @@
 import os
 import shutil
-from mizuna.gitoverleaf import GitOverleaf
+from .version import __version__
+from .gitoverleaf import GitOverleaf
 import warnings
 
 
@@ -21,8 +22,9 @@ class Mizuna:
                  networked_drive: bool = False):
 
         self._cwd = os.getcwd()
+        self.version = __version__
 
-        print(f'Thanks for using Mizuna!')
+        print(f'Mizuna v{self.version}')
         print(f'Mizuna will setup a sync folder from your current working directory.')
         print(f'Current working directory: {self._cwd}')
 
