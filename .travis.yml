@@ -8,6 +8,10 @@ python:
  - 3.8
  - 3.9
 
+branches:
+ only:
+  - main
+
 install:
  - pip install coveralls
 
