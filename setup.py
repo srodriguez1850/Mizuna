@@ -1,5 +1,4 @@
 from setuptools import setup, find_packages
-import pathlib
 
 v = {}
 version = exec(open('mizuna/version.py').read(), v)
@@ -17,7 +16,7 @@ setup(
     long_description_content_type='text/markdown',
     license='MIT License',
     packages=find_packages(),
-    python_requires='>=3.5, <4',
+    python_requires='>=3.6, <4',
     # install_requires=[],
     keywords=['python', 'workflow', 'data-science',
               'latex', 'overleaf',
