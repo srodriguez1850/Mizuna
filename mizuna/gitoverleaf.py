@@ -38,7 +38,12 @@ class GitOverleaf:
         print(f'Git bridge cwd: {self.cwd}')
 
         # TODO: allow multiple folders based on config files
-        if not os.path.isdir(self.repo_local_directory):
+        env_vars = os.environ
+        if env_vars['CI']:
+            print(f'CI detected, skipping bridge initialization.')
+            self.initialized = False
+            return
+        elif not os.path.isdir(self.repo_local_directory):
             res_code, stdout, err = self.clone()
             if res_code == 128:
                 print(f'An error occurred while cloning the repository: {err.decode()}')
