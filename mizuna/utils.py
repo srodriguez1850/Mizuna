@@ -1,6 +1,6 @@
 from typing import List, Optional, Dict, Tuple, Any
 import subprocess
-import getpass
+# import getpass
 
 
 def call_subprocess(cmd_tokens: List[str],
@@ -36,26 +36,26 @@ def call_subprocess(cmd_tokens: List[str],
         return err.returncode, err.stdout, err.stderr
 
 
-def confirmation_prompt(prompt: str = 'Confirm ([y]/n)? ',
-                        yes_responses: List[str] = ['y', 'yes'],
-                        no_responses: List[str] = ['n', 'no']) -> bool:
+# def confirmation_prompt(prompt: str = 'Confirm ([y]/n)? ',
+#                         yes_responses: List[str] = ['y', 'yes'],
+#                         no_responses: List[str] = ['n', 'no']) -> bool:
+#
+#     user_response = input(prompt)
+#
+#     if len(user_response) == 0:
+#         return True
+#     elif user_response.lower() in yes_responses:
+#         return True
+#     elif user_response.lower() in no_responses:
+#         return False
+#     else:
+#         print(f'Unrecognized confirmation: {user_response}')
+#         return False
 
-    user_response = input(prompt)
 
-    if len(user_response) == 0:
-        return True
-    elif user_response.lower() in yes_responses:
-        return True
-    elif user_response.lower() in no_responses:
-        return False
-    else:
-        print(f'Unrecognized confirmation: {user_response}')
-        return False
-
-
-def get_credentials() -> Tuple[str, str]:
-
-    email = getpass.getpass('Overleaf email: ')
-    password = getpass.getpass('Overleaf password: ')
-
-    return email, password
+# def get_credentials() -> Tuple[str, str]:
+#
+#     email = getpass.getpass('Overleaf email: ')
+#     password = getpass.getpass('Overleaf password: ')
+#
+#     return email, password

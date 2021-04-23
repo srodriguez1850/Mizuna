@@ -1,6 +1,6 @@
 import os
 from typing import List, Optional, Dict, Any, Tuple
-from .utils import call_subprocess, get_credentials
+from .utils import call_subprocess
 
 
 def _git(cmd_tokens: List[str],
@@ -38,6 +38,11 @@ class GitOverleaf:
         print(f'Git bridge cwd: {self.cwd}')
 
         # TODO: allow multiple folders based on config files
+        # env_vars = os.environ
+        # if 'CI' in env_vars and env_vars['CI']:
+        #     print(f'CI detected, skipping bridge initialization.')
+        #     self.initialized = False
+        #     return
         if not os.path.isdir(self.repo_local_directory):
             res_code, stdout, err = self.clone()
             if res_code == 128:
@@ -50,16 +55,16 @@ class GitOverleaf:
         print(f'Bridge initialized, bridge directory: {self.repo_local_directory}')
         self.initialized = True
 
-    def clone(self) -> str:
+    def clone(self) -> Tuple[int, Any, Any]:
         if os.path.isdir(self.repo_local_directory):
-            raise ValueError('Repository already cloned.')
+            raise Exception('Repository already cloned.')
 
         print('Cloning Overleaf git repo to sync.')
         output = _git(['clone', self.repo_remote_url, self.repo_local_directory], self.cwd)
 
         return output
 
-    def add(self) -> str:
+    def add(self) -> Tuple[int, Any, Any]:
         """
             Method to add changes to the Overleaf git repository
 
@@ -73,7 +78,7 @@ class GitOverleaf:
 
         return output
 
-    def commit(self) -> str:
+    def commit(self) -> Tuple[int, Any, Any]:
         """
         Method to commit changes to the Overleaf git repository
 
@@ -86,7 +91,7 @@ class GitOverleaf:
 
         return output
 
-    def pull(self) -> str:
+    def pull(self) -> Tuple[int, Any, Any]:
         """Method to pull changes to the Overleaf git repository
         Returns:
             the output from the git command
@@ -99,7 +104,7 @@ class GitOverleaf:
 
         return output
 
-    def push(self) -> str:
+    def push(self) -> Tuple[int, Any, Any]:
         """Method to pull changes to the Overleaf git repository
         Returns:
             the output from the git command

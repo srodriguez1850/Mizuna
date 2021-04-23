@@ -1,4 +1,5 @@
 import os
+import pprint
 import shutil
 from .version import __version__
 from .gitoverleaf import GitOverleaf
@@ -21,6 +22,8 @@ class Mizuna:
                  repo_local_directory: str,
                  networked_drive: bool = False):
 
+        """Initialization method for Mizuna."""
+
         self._cwd = os.getcwd()
         self.version = __version__
 
@@ -34,7 +37,7 @@ class Mizuna:
                           f'This will allow the metadata of same files to be updated and overwritten.', RuntimeWarning)
             shutil._samefile = samefile_network_hook
 
-        self._files_tracked = set()
+        self._files_tracked = dict()
         self.files_tracked_count = len(self._files_tracked)
         self._mizuna_sync_folder = '.mizuna_sync'
 
@@ -58,7 +61,7 @@ class Mizuna:
         print(f'Sync local directory: {full_local_directory}')
         self._bridge = GitOverleaf(repo_remote_url, full_local_directory, self._cwd)
 
-        self._initialized = self._bridge.initialized
+        self.initialized = self._bridge.initialized
 
         if not self._bridge.initialized:
             print(f'Git bridge failed to initialize, sync command will not work.')
@@ -66,39 +69,40 @@ class Mizuna:
             self._bridge.pull()
 
     def __str__(self):
-        print(f'Initialized: {self._initialized}')
+        print(f'Initialized: {self.initialized}')
         print(f'Repository Remote URL: {self._repo_remote_url}')
         print(f'Repository Local Directory: {self._repo_local_directory}')
 
     def track(self,
-              *files):
+              file,
+              remote_file: str = ''):
 
         # TODO: check if file exists before tracking? throw warning if files does not exist
 
-        for file in files:
-
-            if isinstance(file, str):
-                self._add_single_track(file)
-            elif isinstance(file, list):
-                self._add_multi_track(file)
+        if isinstance(file, str):
+            self._add_single_track(file, remote_file)
+        elif isinstance(file, dict):
+            self._add_multi_track(file)
 
         self.files_tracked_count = len(self._files_tracked)
-        print(self._files_tracked)
+        pprint.pprint(self._files_tracked)
 
-    def _add_single_track(self, file_path):
+    def _add_single_track(self,
+                          file_path: str,
+                          remote_path: str):
         if file_path in self._files_tracked:
-            print(f'{file_path} is already being tracked.')
-            return
-        self._files_tracked.add(file_path)
+            # TODO: warnings or prints?
+            warnings.warn(f'{file_path} is already being tracked.', RuntimeWarning)
 
-    def _add_multi_track(self, file_paths):
-        for file in file_paths:
-            self._add_single_track(file)
+        self._files_tracked[file_path] = remote_path
 
-    def untrack(self, file_path):
-        self._files_tracked.remove(file_path)
+    def _add_multi_track(self, files):
+        self._files_tracked.update(files)
+
+    def untrack(self, file):
+        self._files_tracked.pop(file)
         self.files_tracked_count = len(self._files_tracked)
-        print(f'{file_path} untracked.')
+        print(f'{file} untracked.')
 
     def untrack_all(self):
         self._files_tracked.clear()
@@ -110,8 +114,8 @@ class Mizuna:
 
     def sync(self):
 
-        if not self._initialized:
-            print(f'Trying to sync without a valid Git bridge, files will not be synced with Overleaf.')
+        if not self.initialized:
+            raise RuntimeWarning(f'Trying to sync without a valid Git bridge, files will not be synced with Overleaf.')
             return
 
         self._bridge.pull()
@@ -128,10 +132,10 @@ class Mizuna:
                 os.makedirs(os.path.dirname(dest), exist_ok=True)
             shutil.copy2(src, dest)
 
+        res1 = self._bridge.add()
+        res2 = self._bridge.commit()
+        res3 = self._bridge.push()
 
-
-        self._bridge.add()
-        self._bridge.commit()
-        self._bridge.push()
+        return res1 or res2 or res3
 
         #TODO: replacing existing files in remote, what to do?

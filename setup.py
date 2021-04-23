@@ -6,7 +6,7 @@ description = 'Mizuna is a package that automates uploading visualizations to Ov
 long_description = open('README.md').read()
 
 setup(
-    name='Mizuna',
+    name='mizuna',
     version=v['__version__'],
     author='Sebastian Rodriguez',
     author_email='s.rodriguez1850@outlook.com',

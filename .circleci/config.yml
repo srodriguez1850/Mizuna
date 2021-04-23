@@ -13,12 +13,14 @@ jobs:
     executor: python/default
     steps:
       - checkout
-      # - python/load-cache
-      # - python/install-deps
-      # - python/save-cache
+#       - python/load-cache
+#       - python/install-deps
+#       - python/save-cache
+#      - run: pip install twine
       - run: pip install coveralls
-      - run: coverage run --source=mizuna/ -m unittest mizuna.tests.test_mizuna
-      - run: coveralls
+      - run: coverage run --source=mizuna/ -m unittest tests.test_mizuna
+#      - run: coveralls
+#      - run: python setup.py sdist bdist_wheel
 
 workflows:
   main:
