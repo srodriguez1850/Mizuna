@@ -20,7 +20,8 @@ class Mizuna:
     def __init__(self,
                  repo_remote_url: str,
                  repo_local_directory: str,
-                 networked_drive: bool = False):
+                 networked_drive: bool = False,
+                 verbose: bool = False):
 
         """Initialization method for Mizuna."""
 
@@ -69,9 +70,12 @@ class Mizuna:
             self._bridge.pull()
 
     def __str__(self):
-        print(f'Initialized: {self.initialized}')
-        print(f'Repository Remote URL: {self._repo_remote_url}')
-        print(f'Repository Local Directory: {self._repo_local_directory}')
+
+        return_string = f'Initialized: {self.initialized}\n' \
+                        f'Repository Remote URL: {self._repo_remote_url}\n' \
+                        f'Repository Local Directory: {self._repo_local_directory}'
+
+        return return_string
 
     def track(self,
               file,
@@ -80,9 +84,14 @@ class Mizuna:
         # TODO: check if file exists before tracking? throw warning if files does not exist
 
         if isinstance(file, str):
-            self._add_single_track(file, remote_file)
+            if isinstance(remote_file, str):
+                self._add_single_track(file, remote_file)
+            else:
+                raise Exception('File remote location should be a string.')
         elif isinstance(file, dict):
             self._add_multi_track(file)
+        else:
+            raise Exception('File location should be a string.')
 
         self.files_tracked_count = len(self._files_tracked)
         pprint.pprint(self._files_tracked)
@@ -92,11 +101,19 @@ class Mizuna:
                           remote_path: str):
         if file_path in self._files_tracked:
             # TODO: warnings or prints?
-            warnings.warn(f'{file_path} is already being tracked.', RuntimeWarning)
+            warnings.warn(f'{file_path} is already being tracked, updating remote to: {remote_path}', RuntimeWarning)
 
         self._files_tracked[file_path] = remote_path
 
-    def _add_multi_track(self, files):
+    def _add_multi_track(self,
+                         files: dict):
+
+        for k, v in files.items():
+            if not isinstance(k, str):
+                raise Exception(f'File location should be a string: {k}')
+            if not isinstance(v, str):
+                raise Exception(f'File remote location should be a string: {v}')
+
         self._files_tracked.update(files)
 
     def untrack(self, file):
@@ -115,13 +132,13 @@ class Mizuna:
     def sync(self):
 
         if not self.initialized:
-            raise RuntimeWarning(f'Trying to sync without a valid Git bridge, files will not be synced with Overleaf.')
-            return
+            raise Exception(f'Trying to sync without a valid Git bridge, files will not be synced with Overleaf.')
 
         self._bridge.pull()
 
         if len(self._files_tracked) == 0:
-            raise Exception('Trying to call sync with no tracked files.')
+            warnings.warn('Trying to call sync with no tracked files.', RuntimeWarning)
+            return
 
         # copy files over sync folder
         for file in self._files_tracked:

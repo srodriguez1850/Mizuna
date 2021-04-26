@@ -56,6 +56,12 @@ class Initialization(unittest.TestCase):
         with self.assertWarns(RuntimeWarning):
             m = Mizuna(test_repo_url, test_repo_dir, True)
 
+    @patch('mizuna.gitoverleaf.call_subprocess')
+    def test_print(self, mock_subprocess):
+        mock_subprocess.return_value = (0, 'mock', 'mock')
+        m = Mizuna(test_repo_url, test_repo_dir)
+        print(m)
+
 
 class Adding(unittest.TestCase):
 
@@ -66,16 +72,17 @@ class Adding(unittest.TestCase):
         self.m.untrack_all()
         self.assertEqual(self.m.files_tracked_count, 0)
 
-    def test_track_one_single(self):
+    def test_track_single(self):
         self.m.track(file_single1, file_single1)
         self.assertEqual(self.m.files_tracked_count, 1)
         test_set = {file_single1: file_single1}
         self.assertDictEqual(self.m.track_list(), test_set)
 
-    def test_track_two_singles(self):
+    def test_track_dict(self):
         self.m.track(file_single1, file_single1)
         self.m.track(file_single2, file_single2)
         self.assertEqual(self.m.files_tracked_count, 2)
+
         test_set = {file_single1: file_single1,
                     file_single2: file_single2}
         self.assertDictEqual(self.m.track_list(), test_set)
@@ -84,6 +91,34 @@ class Adding(unittest.TestCase):
         with self.assertWarns(RuntimeWarning):
             self.m.track(file_single1)
             self.m.track(file_single1)
+
+    def test_bad_track_local_single(self):
+        with self.assertRaises(Exception):
+            self.m.track(1234)
+
+        self.assertEqual(self.m.files_tracked_count, 0)
+        self.assertDictEqual(self.m.track_list(), dict())
+
+    def test_bad_track_remote_single(self):
+        with self.assertRaises(Exception):
+            self.m.track(file_single1, 1234)
+
+        self.assertEqual(self.m.files_tracked_count, 0)
+        self.assertDictEqual(self.m.track_list(), dict())
+
+    def test_bad_track_dict(self):
+        test_set = {file_single1: 1234,
+                    file_single2: file_single2}
+        with self.assertRaises(Exception):
+            self.m.track(test_set)
+
+        test_set = {file_single1: file_single1,
+                    1234: file_single2}
+        with self.assertRaises(Exception):
+            self.m.track(test_set)
+
+        self.assertEqual(self.m.files_tracked_count, 0)
+        self.assertDictEqual(self.m.track_list(), dict())
 
 
 class Removing(unittest.TestCase):
@@ -125,12 +160,13 @@ class Syncing(unittest.TestCase):
         mock_subprocess.return_value = (0, 'mock', 'mock')
         self.m.track(os.path.join(test_dir, file_single1), file_single1)
         result = self.m.sync()
+        # TODO: needs to ensure files are copied properly
         self.assertEqual(result[0], 0)
 
     @patch('mizuna.gitoverleaf.call_subprocess')
     def test_sync_no_files(self, mock_subprocess):
         mock_subprocess.return_value = (0, 'mock', 'mock')
-        with self.assertRaises(Exception):
+        with self.assertWarns(RuntimeWarning):
             self.m.sync()
 
     def tearDown(self) -> None:
