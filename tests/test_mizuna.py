@@ -42,7 +42,12 @@ class Initialization(unittest.TestCase):
     def test_initialization(self, mock_subprocess):
         mock_subprocess.return_value = (0, 'mock', 'mock')
         m = Mizuna(test_repo_url, test_repo_dir)
-        self.assertTrue(m.initialized)
+
+    @patch('mizuna.gitoverleaf.call_subprocess')
+    def test_clone_fail(self, mock_subprocess):
+        mock_subprocess.return_value = (128, 'fail', 'fail')
+        with self.assertRaises(Exception):
+            m = Mizuna(test_repo_url, test_repo_dir)
 
     @patch('mizuna.gitoverleaf.call_subprocess')
     def test_create_sync_directory(self, mock_subprocess):
@@ -76,7 +81,7 @@ class Adding(unittest.TestCase):
         self.m.track(file_single1, file_single1)
         self.assertEqual(self.m.files_tracked_count, 1)
         test_set = {file_single1: file_single1}
-        self.assertDictEqual(self.m.track_list(), test_set)
+        self.assertDictEqual(self.m.file_track_list(), test_set)
 
     def test_track_dict(self):
         self.m.track(file_single1, file_single1)
@@ -85,7 +90,7 @@ class Adding(unittest.TestCase):
 
         test_set = {file_single1: file_single1,
                     file_single2: file_single2}
-        self.assertDictEqual(self.m.track_list(), test_set)
+        self.assertDictEqual(self.m.file_track_list(), test_set)
 
     def test_track_duplicate(self):
         with self.assertWarns(RuntimeWarning):
@@ -97,14 +102,14 @@ class Adding(unittest.TestCase):
             self.m.track(1234)
 
         self.assertEqual(self.m.files_tracked_count, 0)
-        self.assertDictEqual(self.m.track_list(), dict())
+        self.assertDictEqual(self.m.file_track_list(), dict())
 
     def test_bad_track_remote_single(self):
         with self.assertRaises(Exception):
             self.m.track(file_single1, 1234)
 
         self.assertEqual(self.m.files_tracked_count, 0)
-        self.assertDictEqual(self.m.track_list(), dict())
+        self.assertDictEqual(self.m.file_track_list(), dict())
 
     def test_bad_track_dict(self):
         test_set = {file_single1: 1234,
@@ -118,7 +123,7 @@ class Adding(unittest.TestCase):
             self.m.track(test_set)
 
         self.assertEqual(self.m.files_tracked_count, 0)
-        self.assertDictEqual(self.m.track_list(), dict())
+        self.assertDictEqual(self.m.file_track_list(), dict())
 
 
 class Removing(unittest.TestCase):
@@ -140,12 +145,12 @@ class Removing(unittest.TestCase):
         self.assertEqual(self.m.files_tracked_count, len(self.test_set) - 1)
         test_set_removed = self.test_set
         test_set_removed.pop(file_single1)
-        self.assertDictEqual(self.m.track_list(), test_set_removed)
+        self.assertDictEqual(self.m.file_track_list(), test_set_removed)
 
     def test_remove_all(self):
         self.m.untrack_all()
         self.assertEqual(self.m.files_tracked_count, 0)
-        self.assertDictEqual(self.m.track_list(), dict())
+        self.assertDictEqual(self.m.file_track_list(), dict())
 
 
 class Syncing(unittest.TestCase):
@@ -159,9 +164,19 @@ class Syncing(unittest.TestCase):
     def test_sync(self, mock_subprocess):
         mock_subprocess.return_value = (0, 'mock', 'mock')
         self.m.track(os.path.join(test_dir, file_single1), file_single1)
-        result = self.m.sync()
+        result, stdout, err = self.m.sync()
         # TODO: needs to ensure files are copied properly
-        self.assertEqual(result[0], 0)
+        self.assertEqual(result, 0)
+
+    @patch('mizuna.gitoverleaf.call_subprocess')
+    def test_sync_different_names(self, mock_subprocess):
+        test_set = {os.path.join(test_dir, file_single1): file_single1,
+                    os.path.join(test_dir, file_single1): ''}
+
+        mock_subprocess.return_value = (0, 'mock', 'mock')
+        self.m.track(test_set)
+        result, stdout, err = self.m.sync()
+        self.assertEqual(result, 0)
 
     @patch('mizuna.gitoverleaf.call_subprocess')
     def test_sync_no_files(self, mock_subprocess):
@@ -171,7 +186,3 @@ class Syncing(unittest.TestCase):
 
     def tearDown(self) -> None:
         Utilities.delete_sync_directory()
-
-
-if __name__ == '__main__':
-    unittest.main()

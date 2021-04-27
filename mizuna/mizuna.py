@@ -62,17 +62,11 @@ class Mizuna:
         print(f'Sync local directory: {full_local_directory}')
         self._bridge = GitOverleaf(repo_remote_url, full_local_directory, self._cwd)
 
-        self.initialized = self._bridge.initialized
-
-        if not self._bridge.initialized:
-            print(f'Git bridge failed to initialize, sync command will not work.')
-        else:
-            self._bridge.pull()
+        self._bridge.pull()
 
     def __str__(self):
 
-        return_string = f'Initialized: {self.initialized}\n' \
-                        f'Repository Remote URL: {self._repo_remote_url}\n' \
+        return_string = f'Repository Remote URL: {self._repo_remote_url}\n' \
                         f'Repository Local Directory: {self._repo_local_directory}'
 
         return return_string
@@ -126,13 +120,10 @@ class Mizuna:
         self.files_tracked_count = 0
         print(f'All files untracked.')
 
-    def track_list(self):
+    def file_track_list(self):
         return self._files_tracked
 
     def sync(self):
-
-        if not self.initialized:
-            raise Exception(f'Trying to sync without a valid Git bridge, files will not be synced with Overleaf.')
 
         self._bridge.pull()
 
@@ -141,15 +132,19 @@ class Mizuna:
             return
 
         # copy files over sync folder
-        for file in self._files_tracked:
-            src = file
-            dest = os.path.join(self._bridge.repo_local_directory, file)
-            print(src, dest)
-            if not os.path.exists(os.path.dirname(dest)):
-                os.makedirs(os.path.dirname(dest), exist_ok=True)
-            shutil.copy2(src, dest)
+        for src, dst in self._files_tracked.items():
+            if dst == '':
+                dst = os.path.join(self._bridge.repo_local_directory, src)
+            else:
+                dst = os.path.join(self._bridge.repo_local_directory, dst)
+            print(src, dst)
 
-        res1 = self._bridge.add()
+            if not os.path.exists(os.path.dirname(dst)):
+                os.makedirs(os.path.dirname(dst), exist_ok=True)
+            shutil.copy2(src, dst)
+
+            res1 = self._bridge.add(dst)
+
         res2 = self._bridge.commit()
         res3 = self._bridge.push()
 
