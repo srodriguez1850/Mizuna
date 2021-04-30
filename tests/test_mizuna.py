@@ -165,18 +165,20 @@ class Syncing(unittest.TestCase):
         mock_subprocess.return_value = (0, 'mock', 'mock')
         self.m.track(os.path.join(test_dir, file_single1), file_single1)
         result, stdout, err = self.m.sync()
-        # TODO: needs to ensure files are copied properly
         self.assertEqual(result, 0)
+        self.assertTrue(os.path.exists(os.path.join(sync_dir_name, test_repo_dir, file_single1)))
 
     @patch('mizuna.gitoverleaf.call_subprocess')
     def test_sync_different_names(self, mock_subprocess):
         test_set = {os.path.join(test_dir, file_single1): file_single1,
-                    os.path.join(test_dir, file_single1): ''}
+                    os.path.join(test_dir, file_single2): ''}
 
         mock_subprocess.return_value = (0, 'mock', 'mock')
         self.m.track(test_set)
         result, stdout, err = self.m.sync()
         self.assertEqual(result, 0)
+        self.assertTrue(os.path.exists(os.path.join(sync_dir_name, test_repo_dir, file_single1)))
+        self.assertTrue(os.path.exists(os.path.join(sync_dir_name, test_repo_dir, 'tests', file_single2)))
 
     @patch('mizuna.gitoverleaf.call_subprocess')
     def test_sync_no_files(self, mock_subprocess):

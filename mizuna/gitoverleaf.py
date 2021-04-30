@@ -1,5 +1,5 @@
 import os
-from typing import List, Optional, Dict, Any, Tuple
+from typing import List, Any, Tuple
 from .utils import call_subprocess
 
 
@@ -7,13 +7,23 @@ def _git(cmd_tokens: List[str],
          cwd: str) -> Tuple[int, Any, Any]:
     """
     Execute a subprocess call and properly benchmark and log
-    Args:
-        cmd_tokens: List of command tokens, e.g., ['ls', '-la']
-        cwd: Current working directory
-    Returns:
+
+    Parameters
+    ----------
+    cmd_tokens: list
+        List of command tokens, e.g., ['ls', '-la']
+    cwd: str
+        Current working directory
+
+    Returns
+    -------
+    Tuple
         Decoded stdout of called process after completing
-    Raises:
-        subprocess.CalledProcessError
+
+    Raises
+    ------
+    subprocess.CalledProcessError
+        If there is an error in the subprocess
     """
 
     env_vars = os.environ
@@ -25,14 +35,23 @@ class GitOverleaf:
     def __init__(self,
                  repo_remote_url: str,
                  repo_local_directory: str,
-                 cwd) -> None:
-        """Load configuration of bridge or initialize."""
+                 cwd: str):
+        """
+        Load and configure bridge to Overleaf git repo.
+
+        Parameters
+        ----------
+        repo_remote_url: str
+            Remote URL of the git repository
+        repo_local_directory: str
+            Local directory to maintain the git repository
+        cwd: str
+            Current working directory
+        """
 
         self.repo_local_directory = repo_local_directory
         self.repo_remote_url = repo_remote_url
         self.cwd = cwd
-        # self.config_file = None
-        # self.cred_file = None
 
         print(f'Git bridge: {self.repo_local_directory} -- {self.repo_remote_url}')
         print(f'Git bridge cwd: {self.cwd}')
@@ -47,60 +66,93 @@ class GitOverleaf:
         print(f'Bridge initialized, bridge directory: {self.repo_local_directory}')
 
     def clone(self) -> Tuple[int, Any, Any]:
+        """
+        Clone the Overleaf git repository.
+
+        Returns
+        -------
+        Tuple[int, Any, Any]
+            the output from the git command
+        """
 
         print('Cloning Overleaf git repo to sync.')
         res_code, stdout, err = _git(['clone', self.repo_remote_url, self.repo_local_directory], self.cwd)
 
+        if res_code != 0:
+            raise Exception(err)
+
         return res_code, stdout, err
 
-    def add(self, file) -> Tuple[int, Any, Any]:
+    def add(self,
+            file: str) -> Tuple[int, Any, Any]:
         """
-            Method to add changes to the Overleaf git repository
+        Add changes to the Overleaf git repository.
 
-            Returns:
-                the output from git commands
+        Parameters
+        ----------
+        file: str
+            File to add to the staging
+
+        Returns
+        -------
+        Tuple[int, Any, Any]
+            the output from the git command
         """
+
         res_code, stdout, err = _git(['add', file], self.repo_local_directory)
 
-        print(res_code)
+        if res_code != 0:
+            raise Exception(err)
 
         return res_code, stdout, err
 
     def commit(self) -> Tuple[int, Any, Any]:
         """
-        Method to commit changes to the Overleaf git repository
+        Commit changes to the Overleaf git repository.
 
-        Returns:
-            the output from git commands
+        Returns
+        -------
+        Tuple[int, Any, Any]
+            the output from the git command
         """
-        res_code, stdout, err = _git(['commit', '-m', f'Updating linked files from Mizuna.'], self.repo_local_directory)
 
-        print(res_code)
+        res_code, stdout, err = _git(['commit', '-m', f'Updating linked files from Mizuna'], self.repo_local_directory)
+
+        if res_code != 0:
+            raise Exception(err)
 
         return res_code, stdout, err
 
     def pull(self) -> Tuple[int, Any, Any]:
-        """Method to pull changes to the Overleaf git repository
-        Returns:
+        """
+        Pull changes to the Overleaf git repository.
+
+        Returns
+        -------
+        Tuple[int, Any, Any]
             the output from the git command
         """
+
         res_code, stdout, err = _git(['pull'], self.repo_local_directory)
 
-        # TODO: not a valid .git repo, probably corrupted
         if res_code != 0:
-            raise Exception('Not a valid git repo.')
+            raise Exception(err)
 
         return res_code, stdout, err
 
     def push(self) -> Tuple[int, Any, Any]:
-        """Method to pull changes to the Overleaf git repository
-        Returns:
+        """
+        Push changes to the Overleaf git repository.
+
+        Returns
+        -------
+        Tuple[int, Any, Any]
             the output from the git command
         """
+
         res_code, stdout, err = _git(['push'], self.repo_local_directory)
 
-        # TODO: not a valid .git repo, probably corrupted
         if res_code != 0:
-            raise Exception('Not a valid git repo.')
+            raise Exception(err)
 
         return res_code, stdout, err

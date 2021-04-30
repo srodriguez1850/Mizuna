@@ -94,7 +94,6 @@ class Mizuna:
                           file_path: str,
                           remote_path: str):
         if file_path in self._files_tracked:
-            # TODO: warnings or prints?
             warnings.warn(f'{file_path} is already being tracked, updating remote to: {remote_path}', RuntimeWarning)
 
         self._files_tracked[file_path] = remote_path
@@ -149,5 +148,3 @@ class Mizuna:
         res3 = self._bridge.push()
 
         return res1 or res2 or res3
-
-        #TODO: replacing existing files in remote, what to do?
