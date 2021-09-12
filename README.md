@@ -3,6 +3,7 @@
 <hr>
 <div align="center">
 
+![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/srodriguez1850/Mizuna?label=version)
 ![GitHub Actions Build Status](https://github.com/srodriguez1850/Mizuna/actions/workflows/mizuna-btd.yml/badge.svg)
 [![Coverage Status](https://coveralls.io/repos/github/srodriguez1850/Mizuna/badge.svg?branch=main)](https://coveralls.io/github/srodriguez1850/Mizuna?branch=main)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
@@ -12,7 +13,7 @@
 
 <div align="center">
 
-
+https://user-images.githubusercontent.com/9145577/132977027-54ba2d74-3559-438a-b4d5-aba1ab80e25e.mp4
 
 </div>
 
@@ -151,9 +152,9 @@ m.sync() # Pulls changes, replaces changes with the tracked figures, and pushes
 ## Limitations
 
 - Files from networked drives (e.g., Z drive, Google Drive File Stream) may throw an incorrect SameFileError exception.
-    - See https://bugs.python.org/issue33935
-    - To circumvent this issue, pass `True` into the `networked_drive` parameter in the Mizuna constructor
-      - This prevents samefile checks from shutil.copy()
+    - See https://bugs.python.org/issue33935.
+    - To circumvent this issue, pass `True` into the `networked_drive` parameter in the Mizuna constructor.
+      - This prevents samefile checks from shutil.copy().
 - Overleaf git URLs only work with [Premium](https://www.overleaf.com/user/subscription/plans) accounts.
   - [Referring](https://www.overleaf.com/user/bonus) a single user to Overleaf unlocks git URLs.
 - Mizuna is currently forced to output verbose. Future updates will curb output.
