@@ -30,7 +30,7 @@ to use Gigantum for data analysis. This is a local solution that work directly w
 
 ## Installation
 
-Installation is done through PyPI:
+Installation is done through [PyPI](https://pypi.org/project/mizuna/):
 
 ```
 $ pip install mizuna
