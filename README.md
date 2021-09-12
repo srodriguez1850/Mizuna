@@ -1,6 +1,5 @@
 <h1 align="center">Mizuna</h1>
 
-<hr>
 <div align="center">
 
 ![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/srodriguez1850/Mizuna?label=version)
@@ -9,7 +8,6 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 </div>
-<hr>
 
 <div align="center">
 
