@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 v = {}
 version = exec(open('mizuna/version.py').read(), v)
-description = 'Mizuna is a package that automates uploading visualizations to Overleaf projects.'
+description = 'Mizuna is a package that automates uploading visualizations to Overleaf projects (or git repositories).'
 long_description = open('README.md').read()
 
 setup(

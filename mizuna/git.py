@@ -1,4 +1,5 @@
 import os
+from getpass import getpass
 from typing import List, Any, Tuple
 from .utils import call_subprocess
 
@@ -6,7 +7,7 @@ from .utils import call_subprocess
 def _git(cmd_tokens: List[str],
          cwd: str) -> Tuple[int, Any, Any]:
     """
-    Execute a subprocess call and properly benchmark and log
+    Execute a git subprocess call.
 
     Parameters
     ----------
@@ -30,14 +31,14 @@ def _git(cmd_tokens: List[str],
     return call_subprocess(['git'] + cmd_tokens, cwd, check=True, shell=False, env=dict(env_vars), verbose=True)
 
 
-class GitOverleaf:
+class Git:
 
     def __init__(self,
                  repo_remote_url: str,
                  repo_local_directory: str,
                  cwd: str):
         """
-        Load and configure bridge to Overleaf git repo.
+        Load and configure bridge to a git repository.
 
         Parameters
         ----------
@@ -86,7 +87,7 @@ class GitOverleaf:
     def add(self,
             file: str) -> Tuple[int, Any, Any]:
         """
-        Add changes to the Overleaf git repository.
+        Add changes to the git repository.
 
         Parameters
         ----------
@@ -108,7 +109,7 @@ class GitOverleaf:
 
     def commit(self) -> Tuple[int, Any, Any]:
         """
-        Commit changes to the Overleaf git repository.
+        Commit changes to the git repository.
 
         Returns
         -------
@@ -116,7 +117,7 @@ class GitOverleaf:
             the output from the git command
         """
 
-        res_code, stdout, err = _git(['commit', '-m', f'Updating linked files from Mizuna'], self.repo_local_directory)
+        res_code, stdout, err = _git(['commit', '-m', f'Update from Mizuna'], self.repo_local_directory)
 
         if res_code != 0:
             raise Exception(err)
@@ -125,7 +126,7 @@ class GitOverleaf:
 
     def pull(self) -> Tuple[int, Any, Any]:
         """
-        Pull changes to the Overleaf git repository.
+        Pull changes from the git repository.
 
         Returns
         -------
@@ -142,7 +143,7 @@ class GitOverleaf:
 
     def push(self) -> Tuple[int, Any, Any]:
         """
-        Push changes to the Overleaf git repository.
+        Push changes to the git repository.
 
         Returns
         -------

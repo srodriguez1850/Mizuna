@@ -2,7 +2,7 @@ import os
 import pprint
 import shutil
 from .version import __version__
-from .gitoverleaf import GitOverleaf
+from .git import Git
 import warnings
 
 
@@ -23,7 +23,18 @@ class Mizuna:
                  networked_drive: bool = False,
                  verbose: bool = False):
 
-        """Initialization method for Mizuna."""
+        """
+        Initialization method for Mizuna.
+
+        Parameters
+        ----------
+        repo_remote_url: str
+            Remote URL of the git repository
+        repo_local_directory: str
+            Local directory to maintain the git repository
+        networked_drive: bool
+            True if the local directory is a networked drive
+        """
 
         self._cwd = os.getcwd()
         self.version = __version__
@@ -33,14 +44,15 @@ class Mizuna:
         print(f'Current working directory: {self._cwd}')
 
         if networked_drive:
-            warnings.warn(f'A bug in Python (see https://bugs.python.org/issue33935) prevents files in networked drives from copying properly.'
+            warnings.warn(f'A bug in Python (see https://bugs.python.org/issue33935) prevents files in networked drives'
+                          f'from copying properly.'
                           f'Mizuna will prevent a crucial routine in the copying method from running.'
                           f'This will allow the metadata of same files to be updated and overwritten.', RuntimeWarning)
             shutil._samefile = samefile_network_hook
 
         self._files_tracked = dict()
-        self.files_tracked_count = len(self._files_tracked)
-        self._mizuna_sync_folder = '.mizuna_sync'
+        self._files_tracked_count = 0
+        self._mizuna_sync_folder = '.mizuna'
 
         if os.path.isdir(self._mizuna_sync_folder):
             print(f'Sync folder {self._mizuna_sync_folder} exists.')
@@ -57,10 +69,10 @@ class Mizuna:
         print(f'Remote URL: {self._repo_remote_url}')
         print(f'Local directory: {self._repo_local_directory}')
 
-        print(f'Opening bridge...')
+        print('Connecting to git...')
         full_local_directory = os.path.join(self._mizuna_sync_folder, self._repo_local_directory)
         print(f'Sync local directory: {full_local_directory}')
-        self._bridge = GitOverleaf(repo_remote_url, full_local_directory, self._cwd)
+        self._bridge = Git(repo_remote_url, full_local_directory, self._cwd)
 
         self._bridge.pull()
 
@@ -83,16 +95,27 @@ class Mizuna:
             else:
                 raise Exception('File remote location should be a string.')
         elif isinstance(file, dict):
+            if remote_file != '':
+                warnings.warn(f'Passing a dictionary of files, ignoring remote_file parameter.')
             self._add_multi_track(file)
+        elif isinstance(file, list):
+            if remote_file != '':
+                warnings.warn(f'Passing a list of files, ignoring remote_file parameter.')
+            for f in file:
+                self._add_single_track(f, '')
         else:
             raise Exception('File location should be a string.')
 
-        self.files_tracked_count = len(self._files_tracked)
+        self._files_tracked_count = len(self._files_tracked)
         pprint.pprint(self._files_tracked)
 
     def _add_single_track(self,
                           file_path: str,
                           remote_path: str):
+
+        if not os.path.exists(file_path):
+            raise Exception(f'{file_path} does not exist')
+
         if file_path in self._files_tracked:
             warnings.warn(f'{file_path} is already being tracked, updating remote to: {remote_path}', RuntimeWarning)
 
@@ -107,23 +130,25 @@ class Mizuna:
             if not isinstance(v, str):
                 raise Exception(f'File remote location should be a string: {v}')
 
-        self._files_tracked.update(files)
+            try:
+                self._add_single_track(k, v)
+            except Exception as e:
+                print(e)
 
     def untrack(self, file):
         self._files_tracked.pop(file)
-        self.files_tracked_count = len(self._files_tracked)
+        self._files_tracked_count = len(self._files_tracked)
         print(f'{file} untracked.')
 
     def untrack_all(self):
         self._files_tracked.clear()
-        self.files_tracked_count = 0
+        self._files_tracked_count = 0
         print(f'All files untracked.')
 
     def file_track_list(self):
         return self._files_tracked
 
     def sync(self):
-
         self._bridge.pull()
 
         if len(self._files_tracked) == 0:
@@ -131,16 +156,18 @@ class Mizuna:
             return
 
         # copy files over sync folder
+        # TODO: cleanup, remember the git add files should be relative to the local git repo
         for src, dst in self._files_tracked.items():
             if dst == '':
-                dst = os.path.join(self._bridge.repo_local_directory, src)
+                dst = src
+                dstn = os.path.join(self._bridge.repo_local_directory, src)
             else:
-                dst = os.path.join(self._bridge.repo_local_directory, dst)
-            print(src, dst)
+                dstn = os.path.join(self._bridge.repo_local_directory, dst)
+            print(src, dstn)
 
-            if not os.path.exists(os.path.dirname(dst)):
-                os.makedirs(os.path.dirname(dst), exist_ok=True)
-            shutil.copy2(src, dst)
+            if not os.path.exists(os.path.dirname(dstn)):
+                os.makedirs(os.path.dirname(dstn), exist_ok=True)
+            shutil.copy2(src, dstn)
 
             res1 = self._bridge.add(dst)
 
