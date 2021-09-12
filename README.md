@@ -26,7 +26,7 @@ recompiling LaTeX to upload and verify changes in my figures. Doing it programma
 navigating the UI every change.
 
 The concept is a simplified version of the [gigaleaf](https://github.com/gigantum/gigaleaf) library without needing
-to use Gigantum for data analysis. This is a local solution that work directly with Overleaf (or any git repository).
+to use Gigantum for data analysis. This is a local solution that works directly with Overleaf (or any git repository).
 
 ## Installation
 
