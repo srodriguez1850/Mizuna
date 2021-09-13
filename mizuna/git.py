@@ -1,34 +1,6 @@
 import os
-from getpass import getpass
 from typing import List, Any, Tuple
-from .utils import call_subprocess
-
-
-def _git(cmd_tokens: List[str],
-         cwd: str) -> Tuple[int, Any, Any]:
-    """
-    Execute a git subprocess call.
-
-    Parameters
-    ----------
-    cmd_tokens: list
-        List of command tokens, e.g., ['ls', '-la']
-    cwd: str
-        Current working directory
-
-    Returns
-    -------
-    Tuple
-        Decoded stdout of called process after completing
-
-    Raises
-    ------
-    subprocess.CalledProcessError
-        If there is an error in the subprocess
-    """
-
-    env_vars = os.environ
-    return call_subprocess(['git'] + cmd_tokens, cwd, check=True, shell=False, env=dict(env_vars), verbose=True)
+from .utils.utils import verbose_print, call_subprocess
 
 
 class Git:
@@ -38,7 +10,7 @@ class Git:
                  repo_local_directory: str,
                  cwd: str):
         """
-        Load and configure bridge to a git repository.
+        Git constructor.
 
         Parameters
         ----------
@@ -54,17 +26,44 @@ class Git:
         self.repo_remote_url = repo_remote_url
         self.cwd = cwd
 
-        print(f'Git bridge: {self.repo_local_directory} -- {self.repo_remote_url}')
-        print(f'Git bridge cwd: {self.cwd}')
+        verbose_print(f'Git bridge: {self.repo_local_directory} -- {self.repo_remote_url}')
+        verbose_print(f'Git bridge cwd: {self.cwd}')
 
         if not os.path.isdir(self.repo_local_directory):
             res_code, stdout, err = self.clone()
             if res_code != 0:
                 raise Exception(f'An error occurred while cloning the repository: {err.decode()}')
         else:
-            print(f'Found existing repo in sync folder: {self.repo_local_directory}')
+            verbose_print(f'[mizuna] Found existing repo in sync folder: {self.repo_local_directory}')
 
-        print(f'Bridge initialized, bridge directory: {self.repo_local_directory}')
+        print(f'[mizuna] Git connection established -- directory: {self.repo_local_directory}')
+
+    @staticmethod
+    def __git(cmd_tokens: List[str],
+              cwd: str) -> Tuple[int, Any, Any]:
+        """
+        Execute a git subprocess call.
+
+        Parameters
+        ----------
+        cmd_tokens: list
+            List of command tokens, e.g., ['ls', '-la']
+        cwd: str
+            Current working directory
+
+        Returns
+        -------
+        Tuple
+            Decoded stdout of called process after completing
+
+        Raises
+        ------
+        subprocess.CalledProcessError
+            If there is an error in the subprocess
+        """
+
+        env_vars = os.environ
+        return call_subprocess(['git'] + cmd_tokens, cwd, check=True, shell=False, env=dict(env_vars))
 
     def clone(self) -> Tuple[int, Any, Any]:
         """
@@ -76,8 +75,8 @@ class Git:
             the output from the git command
         """
 
-        print('Cloning Overleaf git repo to sync.')
-        res_code, stdout, err = _git(['clone', self.repo_remote_url, self.repo_local_directory], self.cwd)
+        verbose_print('[mizuna] Cloning git repository...')
+        res_code, stdout, err = self.__git(['clone', self.repo_remote_url, self.repo_local_directory], self.cwd)
 
         if res_code != 0:
             raise Exception(err)
@@ -100,7 +99,7 @@ class Git:
             the output from the git command
         """
 
-        res_code, stdout, err = _git(['add', file], self.repo_local_directory)
+        res_code, stdout, err = self.__git(['add', file], self.repo_local_directory)
 
         if res_code != 0:
             raise Exception(err)
@@ -117,7 +116,7 @@ class Git:
             the output from the git command
         """
 
-        res_code, stdout, err = _git(['commit', '-m', f'Update from Mizuna'], self.repo_local_directory)
+        res_code, stdout, err = self.__git(['commit', '-m', f'Update from Mizuna'], self.repo_local_directory)
 
         if res_code != 0:
             raise Exception(err)
@@ -134,7 +133,7 @@ class Git:
             the output from the git command
         """
 
-        res_code, stdout, err = _git(['pull'], self.repo_local_directory)
+        res_code, stdout, err = self.__git(['pull'], self.repo_local_directory)
 
         if res_code != 0:
             raise Exception(err)
@@ -151,7 +150,7 @@ class Git:
             the output from the git command
         """
 
-        res_code, stdout, err = _git(['push'], self.repo_local_directory)
+        res_code, stdout, err = self.__git(['push'], self.repo_local_directory)
 
         if res_code != 0:
             raise Exception(err)

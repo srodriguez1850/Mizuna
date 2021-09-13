@@ -2,13 +2,14 @@ from typing import List, Optional, Dict, Tuple, Any
 import subprocess
 import warnings
 
+verbose = True
+
 
 def call_subprocess(cmd_tokens: List[str],
                     cwd: str,
                     check: bool = True,
                     shell: bool = False,
-                    env: Optional[Dict[str, str]] = None,
-                    verbose: bool = False) -> Tuple[int, Any, Any]:
+                    env: Optional[Dict[str, str]] = None) -> Tuple[int, Any, Any]:
     """
     Executes a subprocess call.
 
@@ -24,8 +25,6 @@ def call_subprocess(cmd_tokens: List[str],
         Run as shell command (not recommended)
     env: dict, optional
         Environment variables to pass to the subprocess
-    verbose: bool, optional
-        Flag for verbose output
 
     Returns
     -------
@@ -43,8 +42,12 @@ def call_subprocess(cmd_tokens: List[str],
                            check=check, shell=shell, env=env)
         return r.returncode, r.stdout, r.stderr
     except subprocess.CalledProcessError as err:
-        if verbose:
-            warnings.warn(f"An error occurred in a subprocess call:\ncmd: {' '.join(cmd_tokens)}\n"
-                          f"code: {err.returncode}\n"
-                          f"output: {err.stdout} \nerror: {err.stderr}")
+        warnings.warn(f"An error occurred in a subprocess call:\ncmd: {' '.join(cmd_tokens)}\n"
+                      f"code: {err.returncode}\n"
+                      f"output: {err.stdout} \nerror: {err.stderr}")
         return err.returncode, err.stdout, err.stderr
+
+
+def verbose_print(t):
+    if verbose:
+        print(t)
