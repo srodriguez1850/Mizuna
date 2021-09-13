@@ -90,7 +90,7 @@ m = Mizuna(remote, repo_dir) # Mizuna object
 
 ```python
 remote = 'https://git.overleaf.com/thisisarandomproject' # Repository URL
-repo_dir = 'Z:\CloneHere' # Directory to clone the remote into
+repo_dir = 'CloneHere' # Directory to clone the remote into
 
 m = Mizuna(remote, repo_dir, networked_drive=True) # Mizuna object (networked drive)
 ```
@@ -103,20 +103,35 @@ Mizuna can track a single file:
 m.track('mychart.png') # Track one file
 ```
 
-A single file renamed on the remote:
+A single file renamed on the remote (as a tuple):
 
 ```python
-m.track('mychart.png', 'figure1.png') # Track one file and rename on remote
+m.track(('mychart.png', 'figure1.png')) # Track one file and rename on remote
 ```
 
+Multiple files renamed on the remote (as tuples):
+
 ```python
-m.track('mychart.png', 'figures/figure1.png') # You can also place files inside directories on the remote
+f1 = ('mychart1.png', 'figure1.png')
+f2 = ('mychart2.png', 'figure2.png')
+f3 = ('mychart3.png', 'figure3.png')
+
+m.track(f1, f2, f3) # Track files as tuples
 ```
 
 A list of files:
 
 ```python
 m.track(['mychart1.png', 'mychart2.png', 'mychart3.png']) # Track multiple files
+```
+
+A list of files with their respective renames:
+
+```python
+files = ['mychart1.png', 'mychart2.png', 'mychart3.png']
+remotes = ['figure1.png', 'figure2.png', 'figure3.png']
+
+m.track(files, remotes) # Track multiple files and rename on remote
 ```
 
 Or a dictionary containing multiple files with their respective renames on the remote:
@@ -141,7 +156,7 @@ m.untrack_all() # Untrack all files
 If you need to see all the files currently tracked by Mizuna:
 
 ```python
-m.file_track_list() # List all files tracked
+m.track_list # List all files tracked
 ```
 
 ### Syncing
