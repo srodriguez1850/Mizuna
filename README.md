@@ -21,12 +21,13 @@ choice.
 
 ### Why?
 
-Visualizations need constant iteration. I noticed I was spending ~10 seconds every time I navigated Overleaf's UI and
-recompiling LaTeX to upload and verify changes in my figures. Doing it programmatically improved my workflow by not
-navigating the UI every change.
+Data visualizations need constant iteration. I noticed I was spending ~10 seconds every time I needed to upload a new
+figure through the Overleaf web UI to verify it looked proper. Mizuna freed cycles by rendering the visualization and
+automatically uploading it for me.
 
 The concept is a simplified version of the [gigaleaf](https://github.com/gigantum/gigaleaf) library without needing
-to use Gigantum for data analysis. This is a local solution that works directly with Overleaf (or any git repository).
+to use Gigantum for data analysis. This is a local alternative that works directly with Overleaf (or any git 
+repository).
 
 ## Installation
 
@@ -40,7 +41,11 @@ $ pip install mizuna
 
 ### Quick Start
 
-This is a brief example on initializing Mizuna, creating and saving a figure, tracking it, and syncing with the remote.
+Brief example workflow:
+- Initialize Mizuna
+- Create and save a figure with your favorite visualization library (e.g., Seaborn, matplotlib)
+- Track the resulting file with Mizuna
+- Sync with your remote repository
 
 ```python
 # Import Mizuna object
@@ -74,7 +79,7 @@ Initialize the Mizuna object with the repository URL, the name of the local dire
 and (optionally) whether the local directory is within a networked drive (e.g., a Z: drive or Google Drive File Stream).
 
 If the drive is networked, pass `True` into the `networked_drive` parameter for Mizuna to work properly.
-See Limitations.
+See [Limitations](#Limitations).
 
 ```python
 remote = 'https://git.overleaf.com/thisisarandomproject' # Repository URL
@@ -85,7 +90,7 @@ m = Mizuna(remote, repo_dir) # Mizuna object
 
 ```python
 remote = 'https://git.overleaf.com/thisisarandomproject' # Repository URL
-repo_dir = 'CloneHere' # Directory to clone the remote into
+repo_dir = 'Z:\CloneHere' # Directory to clone the remote into
 
 m = Mizuna(remote, repo_dir, networked_drive=True) # Mizuna object (networked drive)
 ```
