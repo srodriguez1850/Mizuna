@@ -80,9 +80,13 @@ class Adding(unittest.TestCase):
         self.m.untrack_all()
         self.assertEqual(self.m.track_count, 0)
 
-    def test_track_empty(self):
+    def test_track_bad_empty(self):
         with self.assertRaises(Exception):
             self.m.track()
+
+    def test_track_bad_empty_list(self):
+        with self.assertRaises(Exception):
+            self.m.track([])
 
     def test_track_single(self):
         self.m.track(file1)
@@ -90,21 +94,22 @@ class Adding(unittest.TestCase):
         test_set = {file1: file1}
         self.assertDictEqual(self.m.track_list, test_set)
 
-    def test_track_tuple(self):
-        self.m.track((file1, 'renamed.txt'))
+    def test_track_single_rename(self):
+        self.m.track(file1, 'renamed.txt')
         self.assertEqual(self.m.track_count, 1)
         test_set = {file1: 'renamed.txt'}
         self.assertDictEqual(self.m.track_list, test_set)
 
-    def test_track_two_tuples(self):
-        self.m.track((file1, 'renamed1.txt'), (file2, 'renamed2.txt'))
-        self.assertEqual(self.m.track_count, 2)
-        test_set = {file1: 'renamed1.txt',
-                    file2: 'renamed2.txt'}
+    def test_track_list_files(self):
+        self.m.track([file1, file2, file3])
+        self.assertEqual(self.m.track_count, 3)
+        test_set = {file1: file1,
+                    file2: file2,
+                    file3: file3}
         self.assertDictEqual(self.m.track_list, test_set)
 
-    def test_track_many_tuples(self):
-        self.m.track((file1, 'renamed1.txt'), (file2, 'renamed2.txt'), (file3, 'renamed3.txt'))
+    def test_track_list_tuples(self):
+        self.m.track([(file1, 'renamed1.txt'), (file2, 'renamed2.txt'), (file3, 'renamed3.txt')])
         self.assertEqual(self.m.track_count, 3)
         test_set = {file1: 'renamed1.txt',
                     file2: 'renamed2.txt',
@@ -117,16 +122,6 @@ class Adding(unittest.TestCase):
         test_set = {file1: file1,
                     file2: file2,
                     file3: file3}
-        self.assertDictEqual(self.m.track_list, test_set)
-
-    def test_track_list_with_remotes(self):
-        files = [file1, file2, file3]
-        remotes = ['renamed1.txt', 'renamed2.txt', 'renamed3.txt']
-        self.m.track(files, remotes)
-        self.assertEqual(self.m.track_count, 3)
-        test_set = {file1: 'renamed1.txt',
-                    file2: 'renamed2.txt',
-                    file3: 'renamed3.txt'}
         self.assertDictEqual(self.m.track_list, test_set)
 
     def test_track_dict(self):
@@ -143,24 +138,15 @@ class Adding(unittest.TestCase):
 
     def test_track_bad_remote_type(self):
         with self.assertRaises(Exception):
-            self.m.track((file1, 1234))
+            self.m.track(file1, 1234)
 
     def test_track_bad_list_type(self):
         with self.assertRaises(Exception):
-            self.m.track([file1, file2], 1234)
-
-    def test_track_different_argument_types(self):
-        with self.assertRaises(Exception):
-            self.m.track((file1, file1), 1234)
+            self.m.track([1234, 1234])
 
     def test_track_too_many_argument_types(self):
         with self.assertRaises(Exception):
             self.m.track((file1, file1), 1234, 'renamed.txt')
-
-    def test_track_mismatched_lists(self):
-        file_list = [file1, file2, file3]
-        with self.assertRaises(Exception):
-            self.m.track(file_list, file_list[0:-2])
 
 
 class Removing(unittest.TestCase):
@@ -189,6 +175,10 @@ class Removing(unittest.TestCase):
         self.m.untrack_all()
         self.assertEqual(self.m.track_count, 0)
         self.assertDictEqual(self.m.track_list, dict())
+
+    def test_remove_bad_key(self):
+        with self.assertRaises(Exception):
+            self.m.untrack('badkey.txt')
 
 
 class Syncing(unittest.TestCase):
