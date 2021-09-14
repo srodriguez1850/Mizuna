@@ -3,7 +3,7 @@ import shutil
 from .version import __version__
 from .git import Git
 import mizuna.utils
-from .utils.utils import verbose_print
+from .utils.utils import verbose_print, all_of_type
 import warnings
 
 
@@ -100,36 +100,34 @@ class Mizuna:
 
         if len(args) == 0:
             raise Exception('Not enough arguments.')
-        if len(args) > 2 and not all([isinstance(x, tuple) for x in args]):
-            raise Exception('Too many arguments.') # TODO: better error message
+        if len(args) > 2:
+            raise Exception('Too many arguments.')
 
-        tracked_files = args[0]
+        files = args[0]
+        rename = args[1] if len(args) == 2 else None
 
         # single file
-        if isinstance(tracked_files, str):
-            self.__track_single(tracked_files)
+        if isinstance(files, str) and rename is None:
+            self.__track_single(files)
 
-        # tuples
-        elif isinstance(tracked_files, tuple):
-            if len(args) > 1 and isinstance(args[1], tuple):
-                [self.__track_single(x[0], x[1]) for x in args]
-            elif len(args) == 1:
-                self.__track_single(tracked_files[0], tracked_files[1])
-            else:
-                raise Exception('Different types passed to track.')
+        # single file with rename
+        elif isinstance(files, str) and rename is not None:
+            self.__track_single(files, rename)
 
-        # lists
-        elif isinstance(tracked_files, list):
-            if len(args) > 1 and isinstance(args[1], list):
-                self.__track_multiple_list(tracked_files, args[1])
-            elif len(args) == 1:
-                self.__track_multiple_list(tracked_files, tracked_files)
+        # list of files or tuples
+        elif isinstance(files, list) and rename is None:
+            if all_of_type(files, str):
+                for f in files:
+                    self.__track_single(f)
+            elif all_of_type(files, tuple):
+                for f in files:
+                    self.__track_single(f[0], f[1])
             else:
-                raise Exception('Different types passed to track.')
+                raise Exception('Invalid type passed in list.')
 
         # dictionary
-        elif isinstance(tracked_files, dict):
-            self.__track_multiple_dict(tracked_files)
+        elif isinstance(files, dict) and rename is None:
+            self.__track_multiple_dict(files)
 
         # invalid type
         else:
@@ -146,16 +144,6 @@ class Mizuna:
             self.__files_tracked.update({file: file})
         else:
             self.__files_tracked.update({file: remote})
-
-    def __track_multiple_list(self,
-                              files: list,
-                              remotes: list = []):
-
-        if len(files) != len(remotes) and remotes is not None:
-            raise Exception('The size of the files should be equal')
-
-        for f, r in zip(files, remotes):
-            self.__track_single(f, r)
 
     def __track_multiple_dict(self,
                               files: dict):
@@ -182,7 +170,7 @@ class Mizuna:
             return
 
         for src, rename in self.__files_tracked.items():
-            copy_path = os.path.join(self.__bridge.repo_local_directory, rename)
+            copy_path = os.path.join(self.__bridge.__repo_local_directory, rename)
             verbose_print(f'Source: {src} -> Rename: {rename} -- Remote path: {copy_path}')
 
             if not os.path.exists(os.path.dirname(copy_path)):

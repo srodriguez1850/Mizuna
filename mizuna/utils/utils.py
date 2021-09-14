@@ -51,3 +51,10 @@ def call_subprocess(cmd_tokens: List[str],
 def verbose_print(t):
     if verbose:
         print(t)
+
+
+def all_of_type(elements, type_check):
+    if len(elements) == 0:
+        raise Exception('List empty.')
+
+    return all([isinstance(x, type_check) for x in elements])

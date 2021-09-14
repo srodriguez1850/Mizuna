@@ -22,21 +22,21 @@ class Git:
             Current working directory
         """
 
-        self.repo_local_directory = repo_local_directory
-        self.repo_remote_url = repo_remote_url
-        self.cwd = cwd
+        self.__repo_local_directory = repo_local_directory
+        self.__repo_remote_url = repo_remote_url
+        self.__cwd = cwd
 
-        verbose_print(f'Git bridge: {self.repo_local_directory} -- {self.repo_remote_url}')
-        verbose_print(f'Git bridge cwd: {self.cwd}')
+        verbose_print(f'[mizuna] git: {self.__repo_local_directory} -- {self.__repo_remote_url}')
+        verbose_print(f'[mizuna] git cwd: {self.__cwd}')
 
-        if not os.path.isdir(self.repo_local_directory):
+        if not os.path.isdir(self.__repo_local_directory):
             res_code, stdout, err = self.clone()
             if res_code != 0:
                 raise Exception(f'An error occurred while cloning the repository: {err.decode()}')
         else:
-            verbose_print(f'[mizuna] Found existing repo in sync folder: {self.repo_local_directory}')
+            verbose_print(f'[mizuna] Found existing repo in sync folder: {self.__repo_local_directory}')
 
-        print(f'[mizuna] Git connection established -- directory: {self.repo_local_directory}')
+        print(f'[mizuna] Git connection established -- directory: {self.__repo_local_directory}')
 
     @staticmethod
     def __git(cmd_tokens: List[str],
@@ -76,7 +76,7 @@ class Git:
         """
 
         verbose_print('[mizuna] Cloning git repository...')
-        res_code, stdout, err = self.__git(['clone', self.repo_remote_url, self.repo_local_directory], self.cwd)
+        res_code, stdout, err = self.__git(['clone', self.__repo_remote_url, self.__repo_local_directory], self.__cwd)
 
         if res_code != 0:
             raise Exception(err)
@@ -99,7 +99,7 @@ class Git:
             the output from the git command
         """
 
-        res_code, stdout, err = self.__git(['add', file], self.repo_local_directory)
+        res_code, stdout, err = self.__git(['add', file], self.__repo_local_directory)
 
         if res_code != 0:
             raise Exception(err)
@@ -116,7 +116,7 @@ class Git:
             the output from the git command
         """
 
-        res_code, stdout, err = self.__git(['commit', '-m', f'Update from Mizuna'], self.repo_local_directory)
+        res_code, stdout, err = self.__git(['commit', '-m', f'Update from Mizuna'], self.__repo_local_directory)
 
         if res_code != 0:
             raise Exception(err)
@@ -133,7 +133,7 @@ class Git:
             the output from the git command
         """
 
-        res_code, stdout, err = self.__git(['pull'], self.repo_local_directory)
+        res_code, stdout, err = self.__git(['pull'], self.__repo_local_directory)
 
         if res_code != 0:
             raise Exception(err)
@@ -150,7 +150,7 @@ class Git:
             the output from the git command
         """
 
-        res_code, stdout, err = self.__git(['push'], self.repo_local_directory)
+        res_code, stdout, err = self.__git(['push'], self.__repo_local_directory)
 
         if res_code != 0:
             raise Exception(err)
