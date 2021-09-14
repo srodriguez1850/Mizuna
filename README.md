@@ -103,20 +103,10 @@ Mizuna can track a single file:
 m.track('mychart.png') # Track one file
 ```
 
-A single file renamed on the remote (as a tuple):
+A single file renamed on the remote:
 
 ```python
-m.track(('mychart.png', 'figure1.png')) # Track one file and rename on remote
-```
-
-Multiple files renamed on the remote (as tuples):
-
-```python
-f1 = ('mychart1.png', 'figure1.png')
-f2 = ('mychart2.png', 'figure2.png')
-f3 = ('mychart3.png', 'figure3.png')
-
-m.track(f1, f2, f3) # Track files as tuples
+m.track('mychart.png', 'figure1.png') # Track one file and rename on remote
 ```
 
 A list of files:
@@ -125,13 +115,14 @@ A list of files:
 m.track(['mychart1.png', 'mychart2.png', 'mychart3.png']) # Track multiple files
 ```
 
-A list of files with their respective renames:
+A list of tuples (files renamed on the remote):
 
 ```python
-files = ['mychart1.png', 'mychart2.png', 'mychart3.png']
-remotes = ['figure1.png', 'figure2.png', 'figure3.png']
+f1 = ('mychart1.png', 'figure1.png')
+f2 = ('mychart2.png', 'figure2.png')
+f3 = ('mychart3.png', 'figure3.png')
 
-m.track(files, remotes) # Track multiple files and rename on remote
+m.track([f1, f2, f3]) # Track files as tuples
 ```
 
 Or a dictionary containing multiple files with their respective renames on the remote:
