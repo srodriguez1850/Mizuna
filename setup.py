@@ -1,13 +1,15 @@
 from setuptools import setup, find_packages
+import versioneer
 
 v = {}
-version = exec(open('mizuna/version.py').read(), v)
+version = exec(open('mizuna/_version.py').read(), v)
 description = 'Mizuna is a package that automates uploading visualizations to Overleaf projects (or git repositories).'
 long_description = open('README.md').read()
 
 setup(
     name='mizuna',
-    version=v['__version__'],
+    version=versioneer.get_version(),
+    cmdclass=versioneer.get_cmdclass(),
     author='Sebastian Rodriguez',
     author_email='s.rodriguez1850@outlook.com',
     url='https://github.com/srodriguez1850/Mizuna',

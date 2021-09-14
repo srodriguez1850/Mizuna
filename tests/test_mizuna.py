@@ -36,9 +36,9 @@ class Initialization(unittest.TestCase):
     @patch('mizuna.git.call_subprocess')
     def test_version(self, mock_subprocess):
         mock_subprocess.return_value = (0, 'mock', 'mock')
-        from mizuna.version import __version__
+        import mizuna
         m = Mizuna(test_repo_url, test_repo_dir)
-        self.assertEqual(m.version, __version__)
+        self.assertEqual(m.version, mizuna.__version__)
 
     @patch('mizuna.git.call_subprocess')
     def test_initialization(self, mock_subprocess):

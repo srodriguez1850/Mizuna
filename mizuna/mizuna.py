@@ -1,6 +1,6 @@
 import os
 import shutil
-from .version import __version__
+# from ._version import __version__
 from .git import Git
 import mizuna.utils
 from .utils.utils import verbose_print, all_of_type
@@ -40,7 +40,7 @@ class Mizuna:
         """
 
         mizuna.utils.verbose = verbose
-        self.version = __version__
+        self.version = mizuna.__version__
 
         self.__files_tracked = dict()
 
