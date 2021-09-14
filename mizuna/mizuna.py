@@ -169,8 +169,9 @@ class Mizuna:
             warnings.warn('Mizuna has no files to sync.', RuntimeWarning)
             return
 
+        res1 = None
         for src, rename in self.__files_tracked.items():
-            copy_path = os.path.join(self.__bridge.__repo_local_directory, rename)
+            copy_path = os.path.join(self.__bridge.local_directory, rename)
             verbose_print(f'Source: {src} -> Rename: {rename} -- Remote path: {copy_path}')
 
             if not os.path.exists(os.path.dirname(copy_path)):

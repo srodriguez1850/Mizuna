@@ -38,6 +38,14 @@ class Git:
 
         print(f'[mizuna] Git connection established -- directory: {self.__repo_local_directory}')
 
+    @property
+    def local_directory(self):
+        return self.__repo_local_directory
+
+    @property
+    def remote(self):
+        return self.__repo_remote_url
+
     @staticmethod
     def __git(cmd_tokens: List[str],
               cwd: str) -> Tuple[int, Any, Any]:
