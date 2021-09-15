@@ -40,17 +40,33 @@ class Git:
 
     @property
     def local_directory(self):
+        """
+        Get path of the local directory
+
+        Returns
+        -------
+        str
+            Path of local directory
+        """
         return self.__repo_local_directory
 
     @property
     def remote(self):
+        """
+        Get remote URL
+
+        Returns
+        -------
+        str
+            Remote URL
+        """
         return self.__repo_remote_url
 
     @staticmethod
     def __git(cmd_tokens: List[str],
               cwd: str) -> Tuple[int, Any, Any]:
         """
-        Execute a git subprocess call.
+        Execute a git subprocess call
 
         Parameters
         ----------
@@ -75,12 +91,12 @@ class Git:
 
     def clone(self) -> Tuple[int, Any, Any]:
         """
-        Clone the Overleaf git repository.
+        Clone the Overleaf git repository
 
         Returns
         -------
         Tuple[int, Any, Any]
-            the output from the git command
+            Output from the git command
         """
 
         verbose_print('[mizuna] Cloning git repository...')
@@ -94,17 +110,17 @@ class Git:
     def add(self,
             file: str) -> Tuple[int, Any, Any]:
         """
-        Add changes to the git repository.
+        Add changes to the git repository
 
         Parameters
         ----------
         file: str
-            File to add to the staging
+            File to add to the staging area
 
         Returns
         -------
         Tuple[int, Any, Any]
-            the output from the git command
+            Output from the git command
         """
 
         res_code, stdout, err = self.__git(['add', file], self.__repo_local_directory)
@@ -116,12 +132,12 @@ class Git:
 
     def commit(self) -> Tuple[int, Any, Any]:
         """
-        Commit changes to the git repository.
+        Commit changes to the git repository
 
         Returns
         -------
         Tuple[int, Any, Any]
-            the output from the git command
+            Output from the git command
         """
 
         res_code, stdout, err = self.__git(['commit', '-m', f'Update from Mizuna'], self.__repo_local_directory)
@@ -133,12 +149,12 @@ class Git:
 
     def pull(self) -> Tuple[int, Any, Any]:
         """
-        Pull changes from the git repository.
+        Pull changes from the git repository
 
         Returns
         -------
         Tuple[int, Any, Any]
-            the output from the git command
+            Output from the git command
         """
 
         res_code, stdout, err = self.__git(['pull'], self.__repo_local_directory)
@@ -150,12 +166,12 @@ class Git:
 
     def push(self) -> Tuple[int, Any, Any]:
         """
-        Push changes to the git repository.
+        Push changes to the git repository
 
         Returns
         -------
         Tuple[int, Any, Any]
-            the output from the git command
+            Output from the git command
         """
 
         res_code, stdout, err = self.__git(['push'], self.__repo_local_directory)

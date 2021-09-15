@@ -54,6 +54,26 @@ def verbose_print(t):
 
 
 def all_of_type(elements, type_check):
+    """
+    Checks if all elements of a list is of a specific type
+
+    Parameters
+    ----------
+    elements: list
+        List of elements to check
+    type_check: type
+        Type to check against
+
+    Returns
+    -------
+    bool
+        True if all elements in list are of type_check
+
+    Raises
+    ------
+    Exception
+        If list if empty
+    """
     if len(elements) == 0:
         raise Exception('List empty.')
 

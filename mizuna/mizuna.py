@@ -85,18 +85,60 @@ class Mizuna:
 
     @property
     def track_list(self):
+        """
+        Returns the list of files tracked
+
+        Returns
+        -------
+        list
+            List of files tracked
+        """
         return self.__files_tracked
 
     @property
     def track_count(self):
+        """
+        Returns the number of files tracked
+
+        Returns
+        -------
+        int
+            Number of files tracked
+        """
         return len(self.__files_tracked)
 
     @property
     def git(self):
+        """
+        Returns the git object to the remote repository
+
+        Returns
+        -------
+        Git
+            Git object to remote
+        """
         return self.__bridge
 
     def track(self,
               *args):
+
+        """
+        Tracks a single or set of files, with optional renaming on the remote
+
+        Parameters
+        ----------
+        args
+            - The path of a single file
+            - The path of a single file, the path of its rename on the remote
+            - A list of file paths
+            - A list of tuple containing file paths and rename paths
+            - A dictionary where { file_path: remote_path }
+
+        Raises
+        ------
+        Exception
+            If arguments not enough, too many, or invalid
+        """
 
         if len(args) == 0:
             raise Exception('Not enough arguments.')
@@ -152,17 +194,40 @@ class Mizuna:
             self.__track_single(f, r)
 
     def untrack(self, file):
+        """
+        Untracks a single file
+
+        Parameters
+        ----------
+        file: str
+            The file to untrack
+
+        Raises
+        ------
+        KeyError
+            If the file is not found
+        """
 
         self.__files_tracked.pop(file)
         print(f'[mizuna] {file} untracked.')
 
     def untrack_all(self):
+        """
+        Untracks all the files
+        """
 
         self.__files_tracked.clear()
         print(f'[mizuna] All files untracked.')
 
     def sync(self):
+        """
+        Add all tracked files to the git staging area, commit, and push to the repository
 
+        Returns
+        -------
+        Tuple[int, Any, Any]
+            Result code from git operations
+        """
         self.__bridge.pull()
 
         if self.track_count == 0:

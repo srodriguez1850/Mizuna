@@ -1,2 +1,2 @@
 include versioneer.py
-include mizuna/_version.py
+include mizuna/version.py

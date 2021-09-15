@@ -1,4 +1,3 @@
 from mizuna.mizuna import Mizuna
-
-from . import _version
-__version__ = _version.get_versions()['version']
+from . import version
+__version__ = version.get_versions()['version']
