@@ -2,7 +2,6 @@ from setuptools import setup, find_packages
 import versioneer
 
 v = {}
-version = exec(open('mizuna/_version.py').read(), v)
 description = 'Mizuna is a package that automates uploading visualizations to Overleaf projects (or git repositories).'
 long_description = open('README.md').read()
 
@@ -27,7 +26,7 @@ setup(
 
     project_urls={
         'Bug Reports': 'https://github.com/srodriguez1850/Mizuna/issues',
-        'Source': 'https://github.com/srodriguez1850/Mizuna/issues'
+        'Source': 'https://github.com/srodriguez1850/Mizuna'
     },
 
     classifiers=[
